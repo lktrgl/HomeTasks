@@ -81,6 +81,8 @@ static int mpu6050_probe(struct i2c_client *drv_client, const struct i2c_device_
 	i2c_smbus_write_byte_data(drv_client, REG_PWR_MGMT_1, 0);
 	i2c_smbus_write_byte_data(drv_client, REG_PWR_MGMT_2, 0);
 
+        g_mpu6050_data.drv_client = drv_client;
+        
 	printk(KERN_INFO "mpu6050: i2c driver probed\n");
 	return 0;
 }
