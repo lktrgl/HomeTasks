@@ -40,6 +40,7 @@ typedef struct
 
 } lcd_type;
 
+static int isVerbose = 0;
 static lcd_type lcd;
 
 
@@ -392,22 +393,34 @@ int main(int argc, char **argv)
         fprintf(stderr, "no framebuf device is specified.\n");
         exit(1);
     }
-    
+
+    if (argc >= 3)
+    {
+        if (!strcmp(argv[2], "-v"))
+        {
+            isVerbose = 1;
+        }
+    }
+
     _Point center;
     int radius = 0;
     float angle = 0.0;
     float angle2 = 0.0;
 
+    if (isVerbose) fprintf(stderr, "-> fb_init(argv[1]);\n");
     if (!fb_init(argv[1]))
     {
         exit(1);
     }
 
+    if (isVerbose) fprintf(stderr, "-> Graphic_ClearScreen();\n");
     Graphic_ClearScreen();
 
     center.X = lcd.width / 2;
     center.Y = lcd.height / 2;
     radius = 31;
+
+    if (isVerbose) fprintf(stderr, "-> Graphic_drawCircle(center, radius);\n");
     Graphic_drawCircle(center, radius);
 
     angle = 0.0;
@@ -415,13 +428,16 @@ int main(int argc, char **argv)
     //for(angle = 0.0; angle <= 360; ){
     for (angle = 0.0;;)
     {
+        if (isVerbose) fprintf(stderr, "angle = %f;\n", angle);
 
         Graphic_ClearScreen();
         Graphic_drawCircle(center, radius);
 
         for (angle2 = 0.0; angle2 <= 360;)
         {
-            Graphic_drawLine_(
+            if (isVerbose) fprintf(stderr, "angle2 = %f;\n", angle2);
+
+           Graphic_drawLine_(
                     center.X + (radius - 4) * cos((M_PI / 180.0) * angle2 - M_PI / 2),
                     center.Y + (radius - 4) * sin((M_PI / 180.0) * angle2 - M_PI / 2),
 
@@ -439,9 +455,12 @@ int main(int argc, char **argv)
         sleep(1);
     }
 
+    if (isVerbose) fprintf(stderr, "-> Graphic_UpdateScreen();\n");
     Graphic_UpdateScreen();
 
 
+    if (isVerbose) fprintf(stderr, "-> fb_cleanup();\n");
     fb_cleanup();
+
     return (0);
 }
